@@ -1,0 +1,32 @@
+{
+  "mode": "fallback_demo",
+  "reason": "LLM quota unavailable",
+  "product_name": "GlowBoost Vitamin C Serum",
+  "faqs": [
+    {
+      "question": "What is GlowBoost Vitamin C Serum?",
+      "answer": "This product information is derived strictly from the provided dataset.",
+      "category": "informational"
+    },
+    {
+      "question": "What is the concentration of Vitamin C?",
+      "answer": "10%",
+      "category": "informational"
+    },
+    {
+      "question": "Which skin types is it suitable for?",
+      "answer": "Oily, Combination",
+      "category": "safety"
+    },
+    {
+      "question": "How should the product be used?",
+      "answer": "Apply 2\u00e2\u20ac\u201c3 drops in the morning before sunscreen",
+      "category": "usage"
+    },
+    {
+      "question": "What is the price of the product?",
+      "answer": "\u20b9699",
+      "category": "pricing"
+    }
+  ]
+}
