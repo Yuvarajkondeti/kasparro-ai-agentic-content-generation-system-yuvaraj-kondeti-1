@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+HEAD
  Kasparro AI Agentic Content Generation System
 Overview
 
