@@ -1,3 +1,4 @@
+<<<<<<< HEAD
  Kasparro AI Agentic Content Generation System
 Overview
 
@@ -218,3 +219,6 @@ architecture over output prettiness
 honesty over shortcuts
 
 The system is designed to be reviewed, extended, and maintained — not just executed once.
+=======
+# kasparro-ai-agentic-content-generation-system-yuvaraj-kondeti-1
+>>>>>>> 983b4358184e9b02175f97e2cee38cedfb7b47bb
