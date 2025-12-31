@@ -1,224 +1,226 @@
-HEAD
+<<<<<<< HEAD
  Kasparro AI Agentic Content Generation System
 Overview
 
-This repository implements a modular, agentic content generation system designed to transform a fixed product dataset into structured, machine-readable JSON content pages.
+This repository implements a **production-style, multi-agent content generation system**
+designed to transform structured product data into structured JSON content artifacts
+using **CrewAI-based agent orchestration**.
 
-The system is built using a real agent framework (CrewAI) and is architected to demonstrate:
+ Important:  
+This system is intentionally designed to **fail hard** when an LLM is unavailable.
+No outputs are generated without genuine agentic reasoning.
 
-clear agent boundaries
+---
 
-deterministic orchestration
+##  Objective
 
-schema-driven outputs
+Design a modular agentic automation system that:
 
-extensibility and maintainability
+- Uses multiple agents with **clear responsibilities**
+- Enforces **hard constraints** (e.g., ≥15 FAQs)
+- Produces **machine-readable JSON outputs**
+- Avoids hardcoded or fallback-generated artifacts
+- Demonstrates production-grade failure behavior
 
-production-style system thinking
+This project prioritizes **system correctness over demo-ability**.
 
-This is a backend / automation system, not a UI or prompt-only project.
+---
 
- Objective
+##  Core Design Principles
 
-Given a fixed product dataset as the only source of truth, the system autonomously generates:
+- No monolithic scripts
+- No hardcoded outputs
+- No silent fallbacks
+- Explicit agent → task binding
+- Deterministic orchestration
+- Schema-driven validation
+- Quality gates over availability
 
-faq.json
+---
 
-product_page.json
+##  System Architecture (High Level)
+## System Architecture
 
-comparison_page.json
+![System Architecture](docs/diagrams/system_architecture.png)
+Input → Agents → Validation → Output (or FAIL)
 
-using an agent-orchestrated pipeline.
+Agents:
+- FAQ Reasoning Agent
+- Comparison Reasoning Agent
+- Quality Gate Agent
 
-No external facts or assumptions are introduced.
+Execution is controlled by a **CrewAI sequential orchestration pipeline**.
 
- High-Level Architecture
-System Orchestration Flow
+---
 
-The system follows a step-based orchestration model where a central orchestrator coordinates independent agents.
+##  Execution Behavior
 
-Flow:
+### With valid LLM access
+- Agents generate content
+- Quality gates validate constraints
+- JSON artifacts are produced
 
-Input Product Data
+### Without LLM access
+- Agents attempt execution
+- Retries are performed
+- System aborts after failures
+-  No outputs are generated
 
-Product Understanding Agent
+This behavior is intentional and required.
 
-FAQ Generation Agent
+---
 
-Content Generation Agent
+##  Project Structure
 
-Comparison Agent
-
-Quality Gate Agent
-
-Structured JSON Outputs
-
-Agents do not call each other directly.
-All execution is controlled by the orchestrator.
-
- Agent Design
-
-Each agent has one clear responsibility, explicit inputs, and no shared global state.
-
-Agents Implemented
-Agent	Responsibility
-Product Understanding Agent	Normalize and reason over product input
-FAQ Generation Agent	Generate categorized FAQs
-Content Generation Agent	Generate product page content
-Comparison Agent	Compare product with fictional alternative
-Quality Gate Agent	Validate structure and constraints
-Agent Responsibility Separation
-
-This separation ensures:
-
-modularity
-
-testability
-
-easy extension
-
- Content Logic & Templates
-
-Business logic is not embedded in templates.
-
-Logic → agents & reusable blocks
-
-Structure → schemas & templates
-
-Content Block Composition
-
-This allows new pages to be added without modifying existing agents.
-
- Schema-Driven Design
-
-All outputs conform to explicit schemas (Pydantic):
-
-FAQPage
-
-Product
-
-ComparisonPage
-
-Schemas act as:
-
-contracts between agents
-
-validation boundaries
-
-safeguards against malformed outputs
-
- Execution Modes
-Primary Mode — LLM-Backed Agent Execution
-
-Uses CrewAI agents
-
-Backed by OpenAI LLM
-
-Dynamic content generation
-
-Constraint-aware orchestration
-
-Fallback Demo Mode (Explicit)
-
-If LLM execution fails due to external constraints (e.g., API quota):
-
-System switches to explicit fallback demo mode
-
-Outputs are clearly marked:
-
-"mode": "fallback_demo"
-
-
-Fallback exists only to allow pipeline observability
-
-It does not replace the primary LLM workflow
-
-This design ensures transparency and avoids fake or deceptive outputs.
-
- Repository Structure
-.
-├── agents/
-│   ├── product_agent.py
-│   ├── faq_agent.py
-│   ├── content_agent.py
-│   ├── comparison_agent.py
-│   └── quality_agent.py
+kasparro-ai-agentic-content-generation-system/
 │
-├── schemas/
-│   ├── product_schema.py
-│   ├── faq_schema.py
-│   └── comparison_schema.py
-│
-├── data/
-│   └── product.json
-│
-├── outputs/
-│   ├── faq.json
-│   ├── product_page.json
-│   └── comparison_page.json
-│
-├── crew.py
-├── run.py
-├── README.md
-└── docs/
-    ├── projectdocumentation.md
-    └── diagrams/
+├── agents/ # Independent agent definitions
+├── schemas/ # Pydantic output schemas
+├── orchestrator/ # CrewAI orchestration logic
+├── docs/ # Design documentation
+├── run.py # Entry point
+├── requirements.txt # Dependencies
+└── README.md
 
- How to Run
-1. Create virtual environment
-python -m venv venv
-venv\Scripts\activate
+yaml
+Copy code
 
-2. Install dependencies
-pip install crewai crewai-tools openai pydantic python-dotenv
+---
 
-3. Add API key
+##  Running the System
 
-Create .env:
-
-OPENAI_API_KEY=your_key_here
-
-4. Run
+```bash
 python run.py
+If LLM quota is unavailable, the system will fail with a clear error.
+This is expected behavior.
 
+ Notes on Testing
+This system focuses on design correctness.
+Unit tests can be added with mocked LLM responses to validate schemas and quality gates.
+#  2 docs/projectdocumentation.md 
 
-Outputs will be generated in the outputs/ directory.
+```md
+# Project Documentation  
+Kasparro – Agentic Content Generation System
 
- Outputs
+---
 
-All outputs are:
+## 1. Problem Statement
 
-clean JSON
+The goal of this project is to design a **modular, agentic automation system**
+that converts structured product data into structured content artifacts
+(FAQ, product page, comparison page) using autonomous agents.
 
-machine-readable
+The system must:
+- Enforce constraints
+- Avoid hardcoded content
+- Demonstrate real agentic behavior
+- Produce machine-readable JSON
 
-schema-aligned
+---
 
-No UI, no free-form text.
+## 2. Assumptions & Scope
 
- What This System Is NOT
+### Assumptions
+- Product data is the only source of truth
+- LLM access may be unavailable
+- System correctness is prioritized over output availability
 
- Not a prompt-only script
+### Out of Scope
+- UI or frontend
+- Human-in-the-loop editing
+- External research or enrichment
 
- Not a UI / frontend app
+---
 
- Not a hardcoded content generator
+## 3. System Design (Most Important Section)
 
- Not a monolithic Python script
+The system is designed as a **multi-agent pipeline** orchestrated via CrewAI.
 
-This is a system design and agent orchestration exercise.
+Each agent:
+- Has a single responsibility
+- Operates independently
+- Communicates via structured outputs
+- Does not share global state
 
- Final Notes
+### High-Level Flow
 
-This project emphasizes:
+Product Data
+↓
+FAQ Agent ──→ Comparison Agent ──→ Quality Gate Agent
+↓
+Validated JSON OR System Failure
 
-correctness over cleverness
+yaml
+Copy code
 
-architecture over output prettiness
+---
 
-honesty over shortcuts
+## 4. Agent Responsibilities
+## Agent Responsibilities
 
-The system is designed to be reviewed, extended, and maintained — not just executed once.
-=======
-# kasparro-ai-agentic-content-generation-system-yuvaraj-kondeti-1
->>>>>>> 983b4358184e9b02175f97e2cee38cedfb7b47bb
+![Agent Boundaries](docs/diagrams/agent_boundaries.png)
+### FAQ Reasoning Agent
+- Generates ≥15 FAQs
+- Categorizes each FAQ
+- Uses only provided product data
+- Fails if constraints cannot be met
+
+### Comparison Reasoning Agent
+- Generates a fictional comparison product
+- Ensures schema consistency
+- Avoids hardcoded alternatives
+
+### Quality Gate Agent
+- Validates schema correctness
+- Enforces count and completeness rules
+- Rejects partial or invalid outputs
+
+---
+
+## 5. Orchestration Logic
+
+The system uses a **sequential CrewAI process** to ensure:
+
+- Deterministic execution
+- Explicit agent ownership of tasks
+- Clear failure boundaries
+
+Retry logic is implemented at the orchestration level.
+After repeated failures, execution is aborted.
+
+---
+
+## 6. Failure Philosophy (Intentional)
+## Failure Handling
+
+![Failure Flow](docs/diagrams/failure_flow.png)
+
+This system **does not generate fallback content**.
+
+If the LLM is unavailable:
+- No artifacts are produced
+- No schema is bypassed
+- No partial results are saved
+
+This behavior prevents false positives and ensures trust in outputs.
+
+---
+
+## 7. Extensibility
+
+The architecture supports:
+- Additional agents (SEO, Tone, Localization)
+- Parallel execution (future)
+- Cached reasoning layers
+- Mock-based testing
+
+---
+
+## 8. Conclusion
+
+This project demonstrates **agentic system design**, not content writing.
+The focus is on:
+- Correct abstractions
+- Enforced constraints
+- Production-grade failure handling

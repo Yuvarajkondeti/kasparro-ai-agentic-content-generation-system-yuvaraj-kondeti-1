@@ -1,13 +1,28 @@
-from crewai import Agent
+from crewai import Agent, Task
 
-def create_comparison_agent(llm):
-    return Agent(
-        role="Product Comparison Agent",
-        goal="Generate a structured comparison between the given product and a fictional alternative",
+def comparison_agent(llm, product_data):
+    agent = Agent(
+        role="Comparison Reasoning Agent",
+        goal="Generate a logical fictional comparison product and compare it",
         backstory=(
-            "You compare two products using the same schema. "
-            "The second product must be fictional but logically structured."
+            "You generate a fictional but logically consistent alternative product "
+            "using the same schema as the original."
         ),
         llm=llm,
         verbose=True
     )
+
+    task = Task(
+        agent=agent,  # ✅ REQUIRED
+        description=(
+            "Create a fictional Product B logically comparable to the given product. "
+            "Then produce a structured comparison using the same schema for both products. "
+            "Product B must NOT be hardcoded."
+        ),
+        expected_output=(
+            "Valid JSON with structure: "
+            "{ product_a: {...}, product_b: {...} }"
+        )
+    )
+
+    return agent, task

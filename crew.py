@@ -1,36 +1,17 @@
-import json
-from crewai import Crew, Task
-from agents.faq_agent import create_faq_agent
-from schemas.faq_schema import FAQPage
+from crewai import Crew, Process
+from agents.faq_agent import faq_agent
+from agents.comparison_agent import comparison_agent
+from agents.quality_agent import quality_agent
 
 def create_crew(llm, product_data):
-    faq_agent = create_faq_agent(llm)
+    faq_a, faq_t = faq_agent(llm, product_data)
+    comp_a, comp_t = comparison_agent(llm, product_data)
+    qual_a, qual_t = quality_agent(llm)
 
-    faq_task = Task(
-        description=f"""
-        You are given the following product data.
-
-        Your task:
-        1. Generate AT LEAST 15 FAQs.
-        2. Categorize each FAQ into one of the following:
-           - informational
-           - usage
-           - safety
-           - pricing
-           - comparison
-        3. Do NOT add external facts.
-        4. Output MUST be valid JSON matching this schema:
-           {FAQPage.schema_json()}
-
-        Product Data:
-        {json.dumps(product_data)}
-        """,
-        expected_output="Valid JSON matching FAQPage schema with at least 15 FAQs",
-        agent=faq_agent
+    crew = Crew(
+        agents=[faq_a, comp_a, qual_a],
+        tasks=[faq_t, comp_t, qual_t],
+        process=Process.sequential
     )
 
-    return Crew(
-        agents=[faq_agent],
-        tasks=[faq_task],
-        verbose=True
-    )
+    return crew
